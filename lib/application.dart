@@ -5,12 +5,16 @@ import 'package:chat_bot_demo/utils/utils.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> startApplication() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await dotenv.load(fileName: ".env");
   await setUpGetIt();
+  // await setUpStreamChat();
 
   runApp(
     MultiBlocProvider(

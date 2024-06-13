@@ -2,11 +2,13 @@ import 'package:chat_bot_demo/features/authentication/bloc/authentication_bloc.d
 import 'package:chat_bot_demo/repositories/authentication_repository.dart';
 import 'package:chat_bot_demo/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:logger/logger.dart';
+import 'package:logger/logger.dart' as log;
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
-final Logger logger = Logger(
-  printer: PrettyPrinter(
+final log.Logger logger = log.Logger(
+  printer: log.PrettyPrinter(
     methodCount: 5,
     errorMethodCount: 15,
   ),
@@ -17,8 +19,13 @@ final GetIt getIt = GetIt.instance;
 Future<void> setUpGetIt({
   bool usedForTesting = false,
 }) async {
+  // Allow stream chat reassignment.
+  // Used when user logs out and makes a new account or
+  // logs in with another account
+  getIt.allowReassignment = true;
+
   getIt.registerLazySingleton<IAuthenticationRepository>(
-        () => IAuthenticationRepository(),
+    () => IAuthenticationRepository(),
   );
 
   if (!usedForTesting) {
@@ -28,6 +35,32 @@ Future<void> setUpGetIt({
       ),
     );
   }
+}
+
+Future<OwnUser> setUpStreamChat() async {
+  // Set up the chat client using the API kEY
+  final StreamChatClient client = StreamChatClient(
+    dotenv.env['STREAM_APP_ID']!,
+    logLevel: Level.INFO,
+  );
+
+  final res = await client.connectUser(
+    User(id: 'demo-user'),
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZGVtby11c2VyIn0.AvvkXwDpc8g0rQUMEyd4xkzAmr-dMhS064ao368OTWE',
+  );
+
+  final Channel channel = client.channel(
+    'messaging',
+    id: getIt.get<AuthenticationBloc>().state.user!.id,
+  );
+
+  getIt.registerSingleton<StreamChatClient>(client);
+  getIt.registerSingleton<Channel>(channel);
+
+  // Listen to messages
+  await channel.watch();
+
+  return res;
 }
 
 InputDecoration defaultFormFieldStyle({required String label}) {
@@ -48,11 +81,11 @@ class CustomSnackBar {
   const CustomSnackBar();
 
   static void show(
-      BuildContext context,
-      String message, {
-        bool isError = false,
-        int durationSec = 2,
-      }) {
+    BuildContext context,
+    String message, {
+    bool isError = false,
+    int durationSec = 2,
+  }) {
     FocusScope.of(context).unfocus();
 
     ScaffoldMessenger.of(context).showSnackBar(

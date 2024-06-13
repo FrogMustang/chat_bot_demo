@@ -36,22 +36,31 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
 
+  flutter_dotenv: ^5.1.0 # store variables locally
+  stream_chat_flutter: ^8.0.0-beta.3 # chat functionality
+  flutter_spinkit: ^5.2.1 #cool loading indicators
+
   flutter_svg: ^2.0.10+1
 
-  easy_rich_text: ^2.1.0
+  easy_rich_text: ^2.1.0 # easy text with different text styles
 
-  flutter_bloc: ^8.1.6
-  equatable: ^2.0.5
+  flutter_bloc: ^8.1.6 # state management
+  equatable: ^2.0.5 # nice equals for objects
   get_it: ^7.7.0
-  logger: ^2.3.0
+  logger: ^2.3.0 # nice logging
 
-  firebase_core: ^3.1.0
+  firebase_core: ^3.1.0 # authentication
   firebase_auth: ^5.1.0
   email_validator: ^2.1.17
 
-  dartz: ^0.10.1
-  formz: ^0.4.1
-  quiver: ^3.2.1
+  dartz: ^0.10.1 # nice functional programming for error handling
+  formz: ^0.4.1 # nice statuses for requests
+  quiver: ^3.2.1 # use Optional
+
+
+dependency_overrides:
+  # Waiting for https://github.com/GetStream/stream-chat-flutter/issues/1920
+  audio_video_progress_bar: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +86,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/icons/
     - assets/images/
 
