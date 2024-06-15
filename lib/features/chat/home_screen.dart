@@ -5,6 +5,7 @@ import 'package:chat_bot_demo/features/chat/message_options/message_ids.dart';
 import 'package:chat_bot_demo/models/message_option.dart';
 import 'package:chat_bot_demo/utils/constants.dart';
 import 'package:chat_bot_demo/utils/custom_colors.dart';
+import 'package:chat_bot_demo/utils/custom_icons.dart';
 import 'package:chat_bot_demo/utils/utils.dart';
 import 'package:chat_bot_demo/widgets/error_screen.dart';
 import 'package:chat_bot_demo/widgets/message_option_widget.dart';
@@ -62,11 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 id: MessageIds.yeahStartConversation,
                 nextMessageId: MessageIds.checkProfile,
                 optionText: "Yeah! :)",
+                svgIcon: CustomIcons.reply,
               ),
               MessageOption(
                 id: MessageIds.noTalkLater,
                 nextMessageId: MessageIds.botComeBackLater,
                 optionText: "No, let's talk later",
+                svgIcon: CustomIcons.reply,
               ),
             ],
           );
@@ -247,16 +250,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 // MESSAGE OPTIONS
                 Column(
                   children: [
-                    if (messageOptions.isNotEmpty) ...{
-                      for (final MessageOption mo in messageOptions) ...{
-                        const Divider(color: CustomColors.gray),
+                    if (messageOptions.isNotEmpty) ...[
+                      for (final MessageOption mo in messageOptions) ...[
+                        const Divider(color: CustomColors.lightGray),
                         MessageOptionWidget(
                           messageOption: mo,
                           isBotMessage: isBotMessage,
                           isLatestBotMessage: isLatestBotMessage,
                         ),
-                      },
-                    },
+                      ],
+                    ],
                   ],
                 ),
               ],

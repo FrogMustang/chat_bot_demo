@@ -1,6 +1,7 @@
 import 'package:chat_bot_demo/features/chat/message_options/message_ids.dart';
 import 'package:chat_bot_demo/models/message_option.dart';
 import 'package:chat_bot_demo/routing/app_routes_constants.dart';
+import 'package:chat_bot_demo/utils/custom_icons.dart';
 import 'package:chat_bot_demo/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ List<MessageOption> getMessageOptions({required MessageOption mo}) {
           id: MessageIds.checkProfile,
           nextMessageId: null,
           optionText: "Check profile",
+          svgIcon: CustomIcons.redirect,
         ),
       ],
     _ => [],
@@ -24,7 +26,12 @@ Function getMessageOptionCallback({
   return switch (mo.id) {
     MessageIds.yeahStartConversation => () async {
         await sendChannelMessageWithOptions(
-            mo: mo, message: 'Wanna check your profile?');
+          mo: mo,
+          message: 'Wanna check your profile?',
+        );
+      },
+    MessageIds.checkProfile => () {
+        Navigator.pushNamed(context, kProfile);
       },
     MessageIds.noTalkLater => () async {
         // SEND USER REPLY
@@ -35,9 +42,6 @@ Function getMessageOptionCallback({
           message: "Okay, I'll text you back later",
           sentByBot: true,
         );
-      },
-    MessageIds.checkProfile => () {
-        Navigator.pushNamed(context, kProfile);
       },
     _ => throw UnimplementedError(
         'Please provide a callback for this message ID: ${mo.id}',

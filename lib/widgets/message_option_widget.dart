@@ -33,7 +33,14 @@ class MessageOptionWidget extends StatelessWidget {
         children: [
           /// ICON
           if (messageOption.svgIcon?.isNotEmpty == true) ...{
-            SvgPicture.asset(messageOption.svgIcon!),
+            SvgPicture.asset(
+              messageOption.svgIcon!,
+              colorFilter: const ColorFilter.mode(
+                CustomColors.green,
+                BlendMode.srcIn,
+              ),
+              width: 16,
+            ),
           },
           const SizedBox(width: 10),
 
