@@ -59,14 +59,14 @@ class _HomeScreenState extends State<HomeScreen> {
             sentByBot: true,
             messageOptions: [
               MessageOption(
-                id: MessageIds.firstMessageOption1,
+                id: MessageIds.yeahStartConversation,
                 nextMessageId: MessageIds.checkProfile,
-                text: "Yeah! :)",
+                optionText: "Yeah! :)",
               ),
               MessageOption(
-                id: MessageIds.firstMessageOption2,
+                id: MessageIds.noTalkLater,
                 nextMessageId: MessageIds.botComeBackLater,
-                text: "No, let's talk later",
+                optionText: "No, let's talk later",
               ),
             ],
           );
@@ -181,8 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
     StreamMessageWidget defaultMessageWidget,
   ) {
     // messages are reversed (most recent first), so we look for the first one in the list
-    final Message lastBotMessage = messages
-        .firstWhere((Message message) => message.extraData['sentByBot'] == true);
+    final Message lastBotMessage = messages.firstWhere(
+        (Message message) => message.extraData['sentByBot'] == true);
     final Message message = details.message;
     final bool isLatestBotMessage = message.id == lastBotMessage.id;
 
@@ -200,7 +200,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return MessageOption.fromJson(data);
       }).toList();
     }
-
 
     return Row(
       mainAxisAlignment:

@@ -70,7 +70,7 @@ Future<OwnUser> setUpStreamChat() async {
 Future<void> sendChannelMessage({
   required String message,
   bool? sentByBot,
-  List<MessageOption>? messageOptions,
+  List<MessageOption> messageOptions = const [],
 }) async {
   try {
     final Channel channel = getIt.get<Channel>();
@@ -84,7 +84,7 @@ Future<void> sendChannelMessage({
                 'sentByBot': true,
                 'messageOptions': json.encode(messageOptions!
                     .map(
-                      (e) => e.toJSON(),
+                      (e) => e.toJson(),
                     )
                     .toList()),
               }

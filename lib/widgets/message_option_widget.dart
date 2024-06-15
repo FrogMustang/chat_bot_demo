@@ -23,7 +23,8 @@ class MessageOptionWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (isLatestBotMessage) {
-          await getMessageOptionCallback(mo: messageOption).call();
+          await getMessageOptionCallback(context: context, mo: messageOption)
+              .call();
         }
       },
       child: Row(
@@ -38,7 +39,7 @@ class MessageOptionWidget extends StatelessWidget {
 
           // TEXT
           Text(
-            messageOption.text,
+            messageOption.optionText,
             style: TextStyle(
               color: textColor,
             ),
