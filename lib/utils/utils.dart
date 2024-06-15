@@ -1,15 +1,19 @@
+import 'dart:convert';
+
 import 'package:chat_bot_demo/features/authentication/bloc/authentication_bloc.dart';
+import 'package:chat_bot_demo/models/message_option.dart';
 import 'package:chat_bot_demo/repositories/authentication_repository.dart';
 import 'package:chat_bot_demo/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 final log.Logger logger = log.Logger(
   printer: log.PrettyPrinter(
-    methodCount: 5,
+    methodCount: 20,
     errorMethodCount: 15,
   ),
 );
@@ -44,9 +48,9 @@ Future<OwnUser> setUpStreamChat() async {
     logLevel: Level.INFO,
   );
 
-  final res = await client.connectUser(
+  final OwnUser res = await client.connectUser(
     User(id: 'demo-user'),
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZGVtby11c2VyIn0.AvvkXwDpc8g0rQUMEyd4xkzAmr-dMhS064ao368OTWE',
+    dotenv.env['DEMO_USER_TOKEN']!,
   );
 
   final Channel channel = client.channel(
@@ -61,6 +65,45 @@ Future<OwnUser> setUpStreamChat() async {
   await channel.watch();
 
   return res;
+}
+
+Future<void> sendChannelMessage({
+  required String message,
+  bool? sentByBot,
+  List<MessageOption>? messageOptions,
+}) async {
+  try {
+    final Channel channel = getIt.get<Channel>();
+
+    await channel.sendMessage(
+      Message(
+        type: 'message',
+        text: message,
+        extraData: sentByBot == true
+            ? {
+                'sentByBot': true,
+                'messageOptions': json.encode(messageOptions!
+                    .map(
+                      (e) => e.toJSON(),
+                    )
+                    .toList()),
+              }
+            : {},
+      ),
+    );
+  } catch (e, stackTrace) {
+    logger.e(
+      'Failed to send ${sentByBot == true ? 'BOT' : 'NORMAL'} message: \n'
+      '$message \n',
+      stackTrace: stackTrace,
+    );
+
+    Fluttertoast.showToast(
+      msg: 'Failed to send ${sentByBot == true ? 'BOT' : 'NORMAL'} message: \n'
+          '$message \n',
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
 }
 
 InputDecoration defaultFormFieldStyle({required String label}) {

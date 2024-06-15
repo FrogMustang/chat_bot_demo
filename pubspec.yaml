@@ -57,6 +57,8 @@ dependencies:
   formz: ^0.4.1 # nice statuses for requests
   quiver: ^3.2.1 # use Optional
 
+  fluttertoast: ^8.2.6
+
 
 dependency_overrides:
   # Waiting for https://github.com/GetStream/stream-chat-flutter/issues/1920

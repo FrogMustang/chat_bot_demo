@@ -14,7 +14,6 @@ Future<void> startApplication() async {
 
   await dotenv.load(fileName: ".env");
   await setUpGetIt();
-  // await setUpStreamChat();
 
   runApp(
     MultiBlocProvider(

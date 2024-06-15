@@ -2,6 +2,7 @@ import 'package:chat_bot_demo/features/authentication/authentication_screen.dart
 import 'package:chat_bot_demo/features/chat/home_screen.dart';
 import 'package:chat_bot_demo/features/authentication/sign_in_screen.dart';
 import 'package:chat_bot_demo/features/authentication/sign_up_screen.dart';
+import 'package:chat_bot_demo/features/profile/profile_screen.dart';
 import 'package:chat_bot_demo/routing/app_routes_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,11 @@ class AppRoutes {
       case kHomeScreen:
         return MaterialPageRoute(
           builder: (_) => const HomeScreen(),
+          settings: settings,
+        );
+      case kProfile:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileScreen(),
           settings: settings,
         );
 
