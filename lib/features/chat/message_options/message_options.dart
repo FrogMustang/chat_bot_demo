@@ -53,12 +53,6 @@ Future<void> sendChannelMessageWithOptions({
   required MessageOption mo,
   required String message,
 }) async {
-  final List<MessageOption> messageOptions = getMessageOptions(mo: mo);
-
-  final MessageOption nextMessage = messageOptions.firstWhere(
-    (e) => e.id == mo.nextMessageId,
-  );
-
   // SEND USER REPLY
   await sendChannelMessage(message: mo.optionText);
 
@@ -66,6 +60,6 @@ Future<void> sendChannelMessageWithOptions({
   await sendChannelMessage(
     message: message,
     sentByBot: true,
-    messageOptions: messageOptions,
+    messageOptions: getMessageOptions(mo: mo),
   );
 }

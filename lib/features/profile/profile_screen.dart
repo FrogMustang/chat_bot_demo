@@ -140,7 +140,7 @@ class ProfileScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Spacer(),
+                        const Spacer(),
 
                         // BOTTOM INFO
                         Container(

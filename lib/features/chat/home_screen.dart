@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // final Channel channel = getIt.get<Channel>();
   late final Channel channel;
 
-  late final future;
+  late final Future<OwnUser?> future;
 
   @override
   void initState() {
@@ -89,6 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
             textColor: Colors.white,
             timeInSecForIosWeb: 2,
           );
+
+          return null;
         }
       },
     );

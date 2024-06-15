@@ -82,7 +82,7 @@ Future<void> sendChannelMessage({
         extraData: sentByBot == true
             ? {
                 'sentByBot': true,
-                'messageOptions': json.encode(messageOptions!
+                'messageOptions': json.encode(messageOptions
                     .map(
                       (e) => e.toJson(),
                     )
