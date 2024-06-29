@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:chat_bot_demo/models/app_user.dart';
 import 'package:chat_bot_demo/repositories/repositories.dart';
 import 'package:chat_bot_demo/utils/utils.dart';
@@ -19,7 +20,10 @@ class AuthenticationBloc
     required this.auth,
     this.usedForTesting = false,
   }) : super(const AuthenticationState()) {
-    on<AuthenticationUserChanged>(_onUserChanged);
+    on<AuthenticationUserChanged>(
+      _onUserChanged,
+      transformer: droppable(),
+    );
     on<AuthenticationLoggedIn>(_onLogin);
     on<AuthenticationSignedUp>(_onSignUp);
     on<AuthenticationLoggedOut>(_onLogOut);

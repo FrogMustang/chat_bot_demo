@@ -31,6 +31,8 @@ class MessageOptionWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(width: 15),
+
           /// ICON
           if (messageOption.svgIcon?.isNotEmpty == true) ...{
             SvgPicture.asset(
@@ -45,10 +47,13 @@ class MessageOptionWidget extends StatelessWidget {
           const SizedBox(width: 10),
 
           // TEXT
-          Text(
-            messageOption.optionText,
-            style: TextStyle(
-              color: textColor,
+          Flexible(
+            child: Text(
+              messageOption.optionText,
+              style: TextStyle(
+                color: textColor,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ],

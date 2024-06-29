@@ -56,13 +56,19 @@ Future<OwnUser> setUpStreamChat() async {
   final Channel channel = client.channel(
     'messaging',
     id: getIt.get<AuthenticationBloc>().state.user!.id,
+    extraData: {
+      "members": [
+        "demo-chat-bot",
+        "demo-user",
+      ],
+    },
   );
-
-  getIt.registerSingleton<StreamChatClient>(client);
-  getIt.registerSingleton<Channel>(channel);
 
   // Listen to messages
   await channel.watch();
+
+  getIt.registerSingleton<StreamChatClient>(client);
+  getIt.registerSingleton<Channel>(channel);
 
   return res;
 }
@@ -70,6 +76,7 @@ Future<OwnUser> setUpStreamChat() async {
 Future<void> sendChannelMessage({
   required String message,
   bool? sentByBot,
+  String? attachmentLink,
   List<MessageOption> messageOptions = const [],
 }) async {
   try {
@@ -77,8 +84,15 @@ Future<void> sendChannelMessage({
 
     await channel.sendMessage(
       Message(
-        type: 'message',
-        text: message,
+        attachments: attachmentLink?.isNotEmpty == true
+            ? [
+                Attachment(
+                  assetUrl: attachmentLink,
+                )
+              ]
+            : [],
+        text: message +
+            (attachmentLink?.isNotEmpty == true ? '\n$attachmentLink' : ''),
         extraData: sentByBot == true
             ? {
                 'sentByBot': true,
@@ -93,8 +107,9 @@ Future<void> sendChannelMessage({
     );
   } catch (e, stackTrace) {
     logger.e(
-      'Failed to send ${sentByBot == true ? 'BOT' : 'NORMAL'} message: \n'
-      '$message \n',
+      'Failed to send ${sentByBot == true ? 'BOT' : 'NORMAL'} message:'
+      '$message \n'
+      'ERROR: $e \n',
       stackTrace: stackTrace,
     );
 

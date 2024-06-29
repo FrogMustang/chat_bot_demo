@@ -12,9 +12,11 @@ import 'package:chat_bot_demo/widgets/message_option_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,26 +50,17 @@ class _HomeScreenState extends State<HomeScreen> {
           client = getIt.get<StreamChatClient>();
           channel = getIt.get<Channel>();
 
-          await channel.addMembers(
-            [
-              'demo-chat-bot',
-              'demo-user',
-            ],
-          );
-
           await sendChannelMessage(
             message: 'Are you ready to start the conversation?',
             sentByBot: true,
             messageOptions: [
               MessageOption(
                 id: MessageIds.yeahStartConversation,
-                nextMessageId: MessageIds.checkProfile,
                 optionText: "Yeah! :)",
                 svgIcon: CustomIcons.reply,
               ),
               MessageOption(
                 id: MessageIds.noTalkLater,
-                nextMessageId: MessageIds.botComeBackLater,
                 optionText: "No, let's talk later",
                 svgIcon: CustomIcons.reply,
               ),
@@ -207,64 +200,106 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment:
           isBotMessage ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          margin: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.only(
-              topLeft: isBotMessage
-                  ? const Radius.circular(0)
-                  : const Radius.circular(15),
-              topRight: isBotMessage
-                  ? const Radius.circular(15)
-                  : const Radius.circular(0),
-              bottomLeft: const Radius.circular(15),
-              bottomRight: const Radius.circular(15),
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.only(
+                topLeft: isBotMessage
+                    ? const Radius.circular(0)
+                    : const Radius.circular(15),
+                topRight: isBotMessage
+                    ? const Radius.circular(15)
+                    : const Radius.circular(0),
+                bottomLeft: const Radius.circular(15),
+                bottomRight: const Radius.circular(15),
+              ),
             ),
-          ),
-          child: IntrinsicWidth(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // MESSAGE
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          message.text!,
-                          style: TextStyle(
-                            color: isBotMessage ? Colors.black : Colors.white,
-                          ),
-                          textAlign: textAlign,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            child: IntrinsicWidth(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // MESSAGE
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Linkify(
+                            text: message.text!,
+                            style: TextStyle(
+                              color: isBotMessage ? Colors.black : Colors.white,
+                            ),
+                            textAlign: textAlign,
+                            options: const LinkifyOptions(
+                              humanize: false,
+                            ),
+                            onOpen: (LinkableElement link) async {
+                              logger.i('Link CLICKED: ${link.url}');
 
-                // MESSAGE OPTIONS
-                Column(
-                  children: [
-                    if (messageOptions.isNotEmpty) ...[
-                      for (final MessageOption mo in messageOptions) ...[
-                        const Divider(color: CustomColors.lightGray),
-                        MessageOptionWidget(
-                          messageOption: mo,
-                          isBotMessage: isBotMessage,
-                          isLatestBotMessage: isLatestBotMessage,
+                              final Uri url = Uri.parse(link.url);
+                              final bool canLaunch = await canLaunchUrl(url);
+
+                              if (canLaunch) {
+                                launchUrl(url);
+                              }
+                            },
+                          ),
                         ),
                       ],
+                    ),
+                  ),
+
+                  // ATTACHMENTS
+                  for (Attachment att in message.attachments) ...[
+                    if (att.imageUrl?.isNotEmpty == true) ...[
+                      const SizedBox(height: 15),
+                      Image.network(
+                        att.imageUrl!,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+
+                          if (loadingProgress.cumulativeBytesLoaded ==
+                              loadingProgress.expectedTotalBytes) return child;
+
+                          return const Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: SpinKitDualRing(
+                              color: CustomColors.green,
+                              size: 30,
+                              lineWidth: 5,
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ],
-                ),
-              ],
+
+                  // MESSAGE OPTIONS
+                  Column(
+                    children: [
+                      if (messageOptions.isNotEmpty) ...[
+                        for (final MessageOption mo in messageOptions) ...[
+                          const Divider(color: CustomColors.lightGray),
+                          MessageOptionWidget(
+                            messageOption: mo,
+                            isBotMessage: isBotMessage,
+                            isLatestBotMessage: isLatestBotMessage,
+                          ),
+                        ],
+                      ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

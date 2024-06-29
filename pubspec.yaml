@@ -45,6 +45,7 @@ dependencies:
   easy_rich_text: ^2.1.0 # easy text with different text styles
 
   flutter_bloc: ^8.1.6 # state management
+  bloc_concurrency: ^0.2.5 # handle concurrent bloc events
   equatable: ^2.0.5 # nice equals for objects
   get_it: ^7.7.0
   logger: ^2.3.0 # nice logging
@@ -58,6 +59,9 @@ dependencies:
   quiver: ^3.2.1 # use Optional
 
   fluttertoast: ^8.2.6
+
+  flutter_linkify: ^6.0.0 # parse links in messages
+  url_launcher: ^6.3.0 # make links clickable
 
   json_annotation: ^4.9.0
 
